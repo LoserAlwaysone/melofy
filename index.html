@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Melofy</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>Melofy</header>
+
+  <main>
+    <input type="text" id="searchInput" placeholder="Search songs..." />
+    <section>
+      <h2>Featured Songs</h2>
+      <div class="song-list" id="featuredList"></div>
+    </section>
+
+    <section>
+      <div class="song-list" id="songList"></div>
+    </section>
+  </main>
+
+  <div class="player">
+    <div id="nowPlaying"></div>
+    <audio id="mainPlayer" controls></audio>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

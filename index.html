@@ -1,134 +1,105 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Melify</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    /* Custom scrollbar for webkit browsers */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #1f2937; /* dark-gray */
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #4b5563; /* medium-gray */
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #6b7280; /* light-gray */
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newar Alwaysone</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- A modern font like Inter or Montserrat can be added here from Google Fonts if desired -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-900 text-white">
-
-  <!-- Top Navigation Bar -->
-  <nav class="bg-gray-800 shadow-lg sticky top-0 z-50">
-    <div class="container mx-auto px-6 py-3 flex justify-between items-center">
-      <a href="#" class="text-2xl font-bold text-green-500">Melify</a>
-      <div class="flex items-center w-full sm:w-auto">
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Search songs..."
-          class="bg-gray-700 text-white text-sm rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-full sm:w-64"
-        />
-        <button class="ml-2 sm:ml-4 text-gray-300 hover:text-white">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012.68 6.168a7.488 7.488 0 00-5.304 2.557m0 0a7.488 7.488 0 015.304-2.557m0 0a7.488 7.488 0 012.557 5.304M15 7.5a3 3 0 11-6 0 3 3 0 016 0zm0 0V3m0 3.75H18M9 7.5a3 3 0 11-6 0 3 3 0 016 0zm0 0V3m0 3.75H6m.75 4.5l.227.227a.53.53 0 010 .75l-.227.227m4.5 0l-.227-.227a.53.53 0 000-.75l.227-.227m4.5 0l.227.227a.53.53 0 010 .75l-.227.227M13.243 8.25l-.227-.227a.53.53 0 00-.75 0l-.227.227M6.75 11.25l-.227.227a.53.53 0 000 .75l.227.227m4.5 0l.227.227a.53.53 0 010 .75l-.227.227m4.5 0l-.227-.227a.53.53 0 000-.75l.227.227m0 0A3.75 3.75 0 1012 15.375a3.75 3.75 0 000-3.75zm-3.75 0A3.75 3.75 0 1012 15.375a3.75 3.75 0 000-3.75z" />
-          </svg>
-        </button>
-      </div>
-    </div>
-  </nav>
-
-  <main class="container mx-auto px-4 sm:px-6 py-8">
-    <!-- Featured Songs Section -->
-    <section id="featuredSection" class="mb-12">
-      <h2 class="text-3xl font-semibold mb-6 text-green-400">Featured Playlists</h2>
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6" id="featuredList">
-        <!-- Featured songs will be injected here by script.js -->
-      </div>
-    </section>
-
-    <!-- Search Results Section -->
-    <section id="searchResultsSection" class="mb-12">
-      <!-- Search results will be injected here by script.js -->
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6" id="songList"></div>
-    </section>
-  </main>
-
-  <!-- Player -->
-  <div id="player-container" class="fixed bottom-0 left-0 right-0 bg-gray-800/70 backdrop-blur-md p-3 sm:p-4 shadow-t-lg border-t border-gray-700/50">
-    <div class="container mx-auto flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-
-      <!-- Album Art & Song Info -->
-      <div class="flex items-center gap-3 w-full sm:w-1/3 lg:w-1/4 order-1 sm:order-1">
-        <img id="playerAlbumArt" src="https://via.placeholder.com/64" alt="Album Art" class="w-10 h-10 sm:w-12 sm:h-12 rounded object-cover cursor-pointer">
-        <div class="flex-grow overflow-hidden">
-          <div id="playerSongTitle" class="text-xs sm:text-sm font-semibold text-white truncate">Select a song</div>
-          <div id="playerSongArtist" class="text-xs text-gray-400 truncate">---</div>
+<body>
+    <div id="app-container">
+        <!-- Background Video Container -->
+        <div id="background-video-container">
+            <iframe
+                id="background-video-player"
+                src=""
+                frameborder="0"
+                allow="autoplay; encrypted-media;"
+                allowfullscreen
+                style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: -1; pointer-events: none;">
+            </iframe>
         </div>
-      </div>
 
-      <!-- Player Controls -->
-      <div class="flex-grow flex flex-col items-center w-full sm:w-1/3 lg:w-1/2 order-3 sm:order-2 mt-2 sm:mt-0">
-        <div class="flex items-center gap-2 sm:gap-3 text-white">
-          <button id="loopButton" class="p-1 sm:p-2 hover:bg-gray-700 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 sm:w-5 sm:h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg></button>
-          <button id="prevButton" class="p-1 sm:p-2 hover:bg-gray-700 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 sm:w-6 sm:h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M21 16.811c0 .864-.933 1.405-1.683.977l-7.108-4.062a1.125 1.125 0 010-1.954l7.108-4.062A1.125 1.125 0 0121 8.189v8.622zM3 16.811c0 .864-.933 1.405-1.683.977l-7.108-4.062a1.125 1.125 0 010-1.954l7.108-4.062A1.125 1.125 0 013 8.189v8.622z" /></svg></button>
-          <button id="playPauseButton" class="p-2 bg-green-500 hover:bg-green-600 rounded-full text-white shadow-lg">
-            <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 sm:w-8 sm:h-8"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" /></svg>
-            <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 sm:w-8 sm:h-8 hidden"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" /></svg>
-          </button>
-          <button id="nextButton" class="p-1 sm:p-2 hover:bg-gray-700 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 sm:w-6 sm:h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8.189v8.622c0 .864.933 1.405 1.683.977l7.108-4.062a1.125 1.125 0 010-1.954L4.683 7.212A1.125 1.125 0 003 8.189zM12 8.189v8.622c0 .864.933 1.405 1.683.977l7.108-4.062a1.125 1.125 0 010-1.954L13.683 7.212A1.125 1.125 0 0012 8.189z" /></svg></button>
-          <button id="shuffleButton" class="p-1 sm:p-2 hover:bg-gray-700 rounded-full text-gray-400 hidden sm:block"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 sm:w-5 sm:h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" /></svg></button>
+        <!-- Page 1 Content -->
+        <main id="page1-content" class="page-content">
+            <header class="app-header">
+                <h1 id="app-logo" class="text-logo">Newar Alwaysone</h1>
+                <!-- Optional: Slogan or other header elements -->
+            </header>
+
+            <section id="song-suggestions" class="song-suggestions-grid">
+                <!-- Song suggestions will be populated by JS here -->
+                <!-- Example structure for one suggestion (to be repeated by JS):
+                <div class="song-suggestion-card" data-song-id="song1">
+                    <h3 class="song-title">[Song Title]</h3>
+                    <p class="artist-name">[Artist Name]</p>
+                </div>
+                -->
+            </section>
+
+            <section id="active-song-display" class="active-song-display hidden">
+                <div id="lyrics-container">
+                    <h2>Lyrics</h2>
+                    <pre id="lyrics-text"></pre>
+                </div>
+                <div id="youtube-player-container">
+                    <iframe
+                        id="active-song-youtube-player"
+                        width="560"
+                        height="315"
+                        src=""
+                        title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </section>
+
+            <!-- Placeholder for other sections like Trending, Playlists if they go on Page 1 -->
+            <section id="trending-section" class="content-section hidden">
+                <h2>Trending Music</h2>
+                <div class="card-layout">
+                    <!-- Cards populated by JS -->
+                </div>
+            </section>
+            <section id="playlist-section" class="content-section hidden">
+                <h2>Playlists</h2>
+                 <div class="card-layout">
+                    <!-- Cards populated by JS -->
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Placeholder for Page 2 -->
+        <div id="page2-content" class="page-content hidden">
+             <!-- Content for Search, Library, or other views will go here -->
+             <div id="search-view" class="view hidden">
+                <h2>Search</h2>
+                <input type="text" id="search-input-page" placeholder="Search for music...">
+                <div id="search-results-container"></div>
+             </div>
+             <div id="library-view" class="view hidden">
+                <h2>Library</h2>
+                <p>Library Coming Soon</p>
+             </div>
         </div>
-        <div class="w-full flex items-center gap-2 mt-1">
-          <span id="currentTime" class="text-xs text-gray-400">0:00</span>
-          <input type="range" id="progressBar" value="0" class="flex-grow h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer range-sm accent-green-500 mx-1">
-          <span id="totalDuration" class="text-xs text-gray-400">0:00</span>
-        </div>
-      </div>
 
-      <!-- Volume Control -->
-      <div class="flex items-center gap-2 w-auto sm:w-1/3 lg:w-1/4 justify-end order-2 sm:order-3">
-        <button id="volumeButton" class="p-1 sm:p-2 hover:bg-gray-700 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 sm:w-5 sm:h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.631.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
-        <input type="range" id="volumeBar" min="0" max="1" step="0.01" value="1" class="w-16 sm:w-24 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer range-sm accent-green-500">
-      </div>
 
-      <audio id="mainPlayer" class="hidden"></audio> <!-- Default controls hidden -->
-    </div>
-  </div>
+        <nav id="bottom-navigation">
+            <button data-target="page1-content" class="nav-button active">Home</button>
+            <button data-target="search-view" class="nav-button">Search</button>
+            <button data-target="library-view" class="nav-button">Library</button>
+        </nav>
 
-  <script src="script.js"></script>
-
-  <!-- Fullscreen Music View -->
-  <div id="fullscreenPlayer" class="fixed inset-0 bg-gray-900/90 backdrop-blur-xl z-[100] hidden flex-col items-center justify-center p-8 transition-opacity duration-500 ease-in-out">
-    <button id="closeFullscreenButton" class="absolute top-6 right-6 text-white/70 hover:text-white z-[101]">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button>
-
-    <div id="fullscreenBackground" class="absolute inset-0 w-full h-full z-[-1] overflow-hidden">
-      <!-- Background image or video will be set here -->
+        <footer id="app-footer">
+            <p>Made by Newar Alwaysone</p>
+        </footer>
     </div>
 
-    <div class="flex flex-col md:flex-row items-center text-center md:text-left gap-8 max-w-4xl w-full">
-      <img id="fullscreenCoverArt" src="https://via.placeholder.com/300" alt="Album Art" class="w-64 h-64 md:w-80 md:h-80 rounded-lg shadow-2xl object-cover">
-      <div class="flex flex-col gap-4">
-        <h1 id="fullscreenSongTitle" class="text-4xl md:text-5xl font-bold text-white">Song Title</h1>
-        <h2 id="fullscreenSongArtist" class="text-2xl md:text-3xl text-green-400">Artist Name</h2>
-        <div id="fullscreenLyricsContainer" class="mt-4 h-48 overflow-y-auto p-4 bg-black/20 rounded-lg text-gray-300 text-sm leading-relaxed">
-          <p id="fullscreenLyrics">Lyrics will appear here...</p>
-        </div>
-      </div>
-    </div>
-    <!-- Player controls could be replicated or enhanced here if needed, for now, bottom bar player is still active -->
-  </div>
-
+    <script src="script.js"></script>
 </body>
 </html>

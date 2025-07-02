@@ -1,408 +1,439 @@
-// const API_KEY = "AIzaSyC_BRozw5h0FI85YfLBdr0rWlTf5efeEzg"; // Removed: API key is now on the backend
-
-const searchInput = document.getElementById('searchInput');
-const songList = document.getElementById('songList');
-const featuredList = document.getElementById('featuredList'); // Added for featured songs
-const mainPlayer = document.getElementById('mainPlayer');
-// const nowPlaying = document.getElementById('nowPlaying'); // Replaced by new elements
-
-// Player UI Elements
-const playerContainer = document.getElementById('player-container');
-const playerAlbumArt = document.getElementById('playerAlbumArt');
-const playerSongTitle = document.getElementById('playerSongTitle');
-const playerSongArtist = document.getElementById('playerSongArtist');
-const playPauseButton = document.getElementById('playPauseButton');
-const playIcon = document.getElementById('playIcon');
-const pauseIcon = document.getElementById('pauseIcon');
-const prevButton = document.getElementById('prevButton');
-const nextButton = document.getElementById('nextButton');
-const loopButton = document.getElementById('loopButton');
-const shuffleButton = document.getElementById('shuffleButton'); // Added for completeness, functionality TBD
-const currentTimeDisplay = document.getElementById('currentTime');
-const totalDurationDisplay = document.getElementById('totalDuration');
-const progressBar = document.getElementById('progressBar');
-const volumeButton = document.getElementById('volumeButton');
-const volumeBar = document.getElementById('volumeBar');
-
-let currentPlaylist = []; // To store the list of songs currently being browsed/searched
-let currentIndex = -1;    // Index of the currently playing song in currentPlaylist
-let isShuffle = false;    // Shuffle state
-let isLoop = false;       // Loop state for current song
-
-// Fullscreen Player Elements
-const fullscreenPlayer = document.getElementById('fullscreenPlayer');
-const closeFullscreenButton = document.getElementById('closeFullscreenButton');
-const fullscreenBackground = document.getElementById('fullscreenBackground');
-const fullscreenCoverArt = document.getElementById('fullscreenCoverArt');
-const fullscreenSongTitle = document.getElementById('fullscreenSongTitle');
-const fullscreenSongArtist = document.getElementById('fullscreenSongArtist');
-const fullscreenLyrics = document.getElementById('fullscreenLyrics');
-
-
-// Function to load featured songs from data.json
-async function loadFeaturedSongs() {
-  try {
-    const res = await fetch('data.json');
-    if (!res.ok) throw new Error('Failed to fetch featured songs');
-    const songs = await res.json();
-    currentPlaylist = songs; // Set initial playlist to featured songs
-    renderFeaturedSongs(songs);
-  } catch (error) {
-    console.error("Error loading featured songs:", error);
-    if (featuredList) featuredList.innerHTML = '<p>Error loading featured songs.</p>';
-  }
-}
-
-// Function to render featured songs
-function renderFeaturedSongs(songs) {
-  if (!featuredList) return;
-  featuredList.innerHTML = ''; // Clear previous content
-  songs.forEach(song => {
-    const card = document.createElement('div');
-    card.className = 'bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:bg-gray-700 cursor-pointer';
-
-    card.innerHTML = `
-      <div class="aspect-w-1 aspect-h-1">
-        <img src="${song.coverArt}" alt="${song.title}" class="object-cover w-full h-full">
-      </div>
-      <div class="p-4">
-        <h3 class="text-md font-semibold truncate text-white">${song.title}</h3>
-        <p class="text-sm text-gray-400 truncate">${song.artist}</p>
-        <button class="play-button mt-2 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full text-xs transition-colors">
-          Play
-        </button>
-      </div>
-    `;
-
-    // Attach event listener to the card itself or a specific play button within it
-    const songIndex = currentPlaylist.findIndex(s => s.id === song.id);
-
-    card.querySelector('.play-button').addEventListener('click', (e) => {
-      e.stopPropagation(); // Prevent card click if button is clicked
-      currentIndex = songIndex;
-      playSongFromCurrentPlaylist();
-    });
-
-    // Optionally, make the whole card clickable to play or show details
-    card.addEventListener('click', () => {
-      // For now, just play. Later this could open the fullscreen view.
-      currentIndex = songIndex;
-      playSongFromCurrentPlaylist();
-    });
-
-    featuredList.appendChild(card);
-  });
-}
-
-// Call loadFeaturedSongs on page load
 document.addEventListener('DOMContentLoaded', () => {
-  loadFeaturedSongs();
-  // Hide search results section initially if it's empty
-  const searchResultsSection = document.getElementById('searchResultsSection');
-  if (searchResultsSection && songList.children.length === 0) {
-    searchResultsSection.classList.add('hidden');
-  }
-});
+    const defaultBgVideoUrl = 'https://www.youtube.com/embed/ShseBIkoe3w?autoplay=1&mute=1&loop=1&playlist=ShseBIkoe3w&controls=0&showinfo=0&autohide=1&modestbranding=1&iv_load_policy=3&disablekb=1';
+    // Note: YouTube URL parameters for perfect seamless looping and no branding are limited.
+    // playlist=VIDEO_ID is a common trick for looping.
+    // controls=0, showinfo=0, modestbranding=1, iv_load_policy=3 help reduce YouTube UI.
 
-searchInput.addEventListener('input', async () => {
-  const query = searchInput.value.trim();
-  const searchResultsSection = document.getElementById('searchResultsSection');
+    const songData = [
+        {
+            id: "consume",
+            title: "Consume",
+            artist: "Chase Atlantic",
+            lyrics: `Alright, alright, woah
+Why you pointing at me with that knife?
+I've been cutting corners all my life, girl
+The terror doesn't blossom overnight, no
+She's running through the city in a rampage
+Pressing on her fingers 'til the bones break
+There's blood all in her nose from the propane
+But a needle to the skin will make the pain fade (Yeah)
 
-  if (query.length < 3) {
-    songList.innerHTML = '<p class="text-gray-400 col-span-full text-center">Type at least 3 characters to search</p>';
-    if (searchResultsSection) searchResultsSection.classList.remove('hidden'); // Show message
-    if (query.length === 0 && searchResultsSection) searchResultsSection.classList.add('hidden'); // Hide if query is empty
-    return;
-  }
+Yeah, ah-ah
+This is what I do, ah-ah
+Take another bite, ah-ah
+Big enough to chew
 
-  if (searchResultsSection) searchResultsSection.classList.remove('hidden'); // Show section when searching
+She said, "Careful, or you'll lose it"
+But, girl, I'm only human
+And I know there's a blade where your heart is
+And you know how to use it
+And you can take my flesh if you want, girl
+But, baby, don't abuse it
+These voices in my head screaming, "Run now"
+I'm praying that they're human
 
-  try {
-    // const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=10&q=${encodeURIComponent(query)}&key=${API_KEY}`; // Old direct URL
-    const url = `/api/search?q=${encodeURIComponent(query)}`; // New backend endpoint
-    const res = await fetch(url);
-    if (!res.ok) { // Check if response status is not OK (e.g. 4xx, 5xx)
-      const errorData = await res.json().catch(() => ({ message: "Unknown server error" }));
-      throw new Error(`Server error: ${res.status} ${res.statusText}. ${errorData.error || errorData.message || ''}`);
+Rollin', rollin', rolling back your eyes to your mind like
+Oh, woah, the pressure in the gland's tight
+Yeah, woah, yeah, it's either kill or be killed like
+Oh, woah, the blood is either poured or it’s spilt like
+
+Yeah, ah-ah
+This is what I do, ah-ah
+Take another bite, ah-ah
+Big enough to chew
+
+She said, "Careful, or you'll lose it"
+But, girl, I'm only human
+And I know there's a blade where your heart is
+And you know how to use it
+And you can take my flesh if you want, girl
+But, baby, don't abuse it
+These voices in my head screaming, "Run now"
+I'm praying that they're human
+
+Alright, alright, woah
+Love you, but you cannot spend the night, nah
+I've been alone almost all my life, girl
+And shit like that don't change up overnight, sweet
+I let you sleep in my tee
+Tell me the things that you don’t normally tweet
+Acid and LSD and smokin' blunts on the beach
+69 down 69, so we can both get a piece, yeah
+I’ve been cutting corners like my whole life
+Backstabbing bitches tryna' kill me with the whole knife
+Day I die'll be the only day a nigga ghostwrite
+When I go, they'll treat me like a god if this shit goes right
+
+She said, "Careful, or you'll lose it"
+But, girl, I'm only human
+And I know there's a blade where your heart is
+And you know how to use it
+And you can take my flesh if you want, girl
+But, baby, don't abuse it (Calm down)
+These voices in my head screaming, "Run now" (Don't run)
+I'm praying that they're human
+
+Please understand that I'm trying my hardest
+My head's a mess, but I'm trying regardless
+Anxiety is one hell of a problem
+She's latching onto me, I can't resolve it
+It's not right, it's not fair, it's not fair
+It's not fair, it's not fair, it's not fair
+Oh, no, no, no (Don't run)
+Don't run, don't run`,
+            youtubeAudioUrl: 'https://www.youtube.com/embed/oCdXuomafSU', // Using /embed/ for iframe
+            youtubeHoverBgUrl: 'https://www.youtube.com/embed/ShseBIkoe3w?autoplay=1&mute=1&loop=1&playlist=ShseBIkoe3w&controls=0&showinfo=0&autohide=1&modestbranding=1&iv_load_policy=3&disablekb=1'
+        },
+        {
+            id: "birds",
+            title: "Birds of a Feather",
+            artist: "Billie Eilish",
+            lyrics: `[Intro]
+(I want you to stay)
+
+[Verse 1]
+I want you to stay
+'Til I'm in the grave
+'Til I rot away, dead and buried
+'Til I'm in the casket you carry
+If you go, I'm goin' too, uh
+'Cause it was always you (Alright)
+And if I'm turnin' blue, please don't save me
+Nothin' left to lose without my baby
+
+[Refrain]
+Birds of a feather, we should stick together, I know
+I said I'd never think I wasn't better alone
+Can't change the weather, might not be forever
+But if it's forever, it's even better
+
+[Pre-Chorus]
+And I don't know what I'm cryin' for
+I don't think I could love you more
+It might not be long, but baby, I
+
+[Chorus]
+I'll love you 'til the day that I die
+'Til the day that I die
+'Til the light leaves my eyes
+'Til the day that I die
+
+[Verse 2]
+I want you to see, hmm
+How you look to me, hmm
+You wouldn't believe if I told ya
+You would keep the compliments I throw ya
+But you're so full of shit, uh
+Tell me it's a bit, oh
+Say you don't see it, your mind's polluted
+Say you wanna quit, don't be stupid
+
+[Pre-Chorus]
+And I don't know what I'm cryin' for
+I don't think I could love you more
+Might not be long, but baby, I
+Don't wanna say goodbye
+
+[Chorus]
+Birds of a feather, we should stick together, I know ('Til the day that I die)
+I said I'd never think I wasn't better alone ('Til the light leaves my eyes)
+Can't change the weather, might not be forever ('Til the day that I die)
+But if it's forever, it's even better
+
+[Post-Chorus]
+I knew you in another life
+You had that same look in your eyes
+I love you, don't act so surprised `,
+            youtubeAudioUrl: 'https://www.youtube.com/embed/V9PVRfjEBTI',
+            youtubeHoverBgUrl: 'https://www.youtube.com/embed/3AipTSIVegs?autoplay=1&mute=1&loop=1&playlist=3AipTSIVegs&controls=0&showinfo=0&autohide=1&modestbranding=1&iv_load_policy=3&disablekb=1'
+        },
+        {
+            id: "fireflies",
+            title: "Fireflies",
+            artist: "Owl City",
+            lyrics: `You would not believe your eyes
+If ten million fireflies
+Lit up the world as I fell asleep
+'Cause they'd fill the open air
+And leave teardrops everywhere
+You'd think me rude
+But I would just stand and stare
+
+I'd like to make myself believe
+That planet Earth turns slowly
+It's hard to say that I'd rather stay awake when I'm asleep
+'Cause everything is never as it seems
+
+'Cause I'd get a thousand hugs
+From ten thousand lightning bugs
+As they tried to teach me how to dance
+A foxtrot above my head
+A sock hop beneath my bed
+A disco ball is just hanging by a thread
+(Thread, thread...)
+
+I'd like to make myself believe
+That planet Earth turns slowly
+It's hard to say that I'd rather stay awake when I'm asleep
+'Cause everything is never as it seems
+(When I fall asleep)
+
+Leave my door open just a crack
+(Please take me away from here)
+'Cause I feel like such an insomniac
+(Please take me away from here)
+Why do I tire of counting sheep?
+(Please take me away from here)
+When I'm far too tired to fall asleep
+(Ha-ha)
+
+To ten million fireflies
+I'm weird 'cause I hate goodbyes
+I got misty eyes as they said farewell
+(Said farewell)
+But I'll know where several are
+If my dreams get real bizarre
+'Cause I saved a few and I keep them in a jar
+(Jar, jar, jar...)
+
+I'd like to make myself believe
+That planet Earth turns slowly
+It's hard to say that I'd rather stay awake when I'm asleep
+'Cause everything is never as it seems (when I fall asleep)
+
+I'd like to make myself believe
+That planet Earth turns slowly
+It's hard to say that I'd rather stay awake when I'm asleep
+'Cause everything is never as it seems (when I fall asleep)
+
+I'd like to make myself believe
+That planet Earth turns slowly
+It's hard to say that I'd rather stay awake when I'm asleep
+Because my dreams are bursting at the seams`,
+            youtubeAudioUrl: 'https://www.youtube.com/embed/psuRGfAaju4',
+            youtubeHoverBgUrl: 'https://www.youtube.com/embed/DxBQtBGTvkk?autoplay=1&mute=1&loop=1&playlist=DxBQtBGTvkk&controls=0&showinfo=0&autohide=1&modestbranding=1&iv_load_policy=3&disablekb=1'
+        },
+        {
+            id: "somewhere",
+            title: "Somewhere Only We Know",
+            artist: "Keane",
+            lyrics: `I walked across an empty land
+I knew the pathway like the back of my hand
+I felt the earth beneath my feet
+Sat by the river, and it made me complete
+
+[Pre-Chorus]
+Oh, simple thing, where have you gone?
+I'm getting old and I need something to rely on
+So tell me when you're gonna let me in
+I'm getting tired and I need somewhere to begin
+
+[Verse 2]
+I came across a fallen tree
+I felt the branches of it looking at me
+Is this the place we used to love?
+Is this the place that I've been dreaming of?
+
+[Pre-Chorus]
+Oh, simple thing, where have you gone?
+I'm getting old and I need something to rely on
+So tell me when you're gonna let me in
+I'm getting tired and I need somewhere to begin
+
+[Chorus]
+And if you have a minute, why don't we go
+Talk about it somewhere only we know?
+This could be the end of everything
+So why don't we go
+Somewhere only we know?
+Somewhere only we know?
+
+[Pre-Chorus]
+Oh, simple thing, where have you gone?
+I'm getting old and I need something to rely on
+So tell me when you're gonna let me in
+I'm getting tired and I need somewhere to begin
+
+[Chorus]
+And if you have a minute, why don't we go
+Talk about it somewhere only we know?
+This could be the end of everything
+So why don't we go?
+So why don't we go?
+Ooh-aah, oh
+
+[Outro]
+This could be the end of everything
+So why don't we go
+Somewhere only we know?
+Somewhere only we know
+Somewhere only we know `,
+            youtubeAudioUrl: 'https://www.youtube.com/embed/Oextk-If8HQ',
+            youtubeHoverBgUrl: 'https://www.youtube.com/embed/5jgBLnTHKR8?autoplay=1&mute=1&loop=1&playlist=5jgBLnTHKR8&controls=0&showinfo=0&autohide=1&modestbranding=1&iv_load_policy=3&disablekb=1'
+        }
+    ];
+
+    // DOM Elements for Page 1
+    const backgroundPlayer = document.getElementById('background-video-player');
+    const songSuggestionsContainer = document.getElementById('song-suggestions');
+    const activeSongDisplay = document.getElementById('active-song-display');
+    const lyricsText = document.getElementById('lyrics-text');
+    const activeSongYouTubePlayer = document.getElementById('active-song-youtube-player');
+    const appLogo = document.getElementById('app-logo'); // For potential interaction or just reference
+
+    // Navigation Elements
+    const navButtons = document.querySelectorAll('#bottom-navigation .nav-button');
+    const page1Content = document.getElementById('page1-content');
+    const page2Content = document.getElementById('page2-content'); // Main container for other views
+    const searchView = document.getElementById('search-view');
+    const libraryView = document.getElementById('library-view');
+
+    // Store all top-level views that can be switched
+    const allViews = [page1Content, searchView, libraryView];
+
+
+    // Initial Setup
+    function initializeApp() {
+        // Set default background video
+        if (backgroundPlayer) {
+            backgroundPlayer.src = defaultBgVideoUrl;
+        }
+        populateSongSuggestions();
     }
-    const data = await res.json();
-    if (!data.items || data.items.length === 0) {
-        songList.innerHTML = '<p class="text-gray-400 col-span-full text-center">No results found.</p>';
-        // currentPlaylist = []; // Clear playlist if search yields no results
-        return;
+
+    function populateSongSuggestions() {
+        if (!songSuggestionsContainer) return;
+        songSuggestionsContainer.innerHTML = ''; // Clear any existing content
+
+        songData.forEach(song => {
+            const card = document.createElement('div');
+            card.className = 'song-suggestion-card';
+            card.dataset.songId = song.id; // Store song id for event listeners
+
+            const titleEl = document.createElement('h3');
+            titleEl.className = 'song-title';
+            titleEl.textContent = song.title;
+            card.appendChild(titleEl);
+
+            const artistEl = document.createElement('p');
+            artistEl.className = 'artist-name';
+            artistEl.textContent = song.artist;
+            card.appendChild(artistEl);
+
+            songSuggestionsContainer.appendChild(card);
+
+            // Add event listeners
+            card.addEventListener('mouseover', () => handleSongHover(song));
+            card.addEventListener('mouseout', handleSongMouseOut);
+            card.addEventListener('click', () => handleSongClick(song));
+        });
     }
-    // Map YouTube search results to our song object structure
-    const searchResults = data.items.map((item, index) => ({
-      id: item.id.videoId + '-' + index, // Create a unique ID for search results
-      audioSourceId: item.id.videoId,
-      title: item.snippet.title,
-      artist: item.snippet.channelTitle,
-      coverArt: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url || 'https://via.placeholder.com/150',
-      // backgroundVisual: 'default_background_if_needed.jpg' // Search results might not have this
-    }));
-    currentPlaylist = searchResults; // Update current playlist with search results
-    renderSongs(searchResults); // Render the mapped results
-  } catch(error) {
-    console.error("Search error:", error);
-    songList.innerHTML = '<p class="text-red-500 col-span-full text-center">Error loading search results.</p>';
-  }
-});
 
-function renderSongs(songs) { // Changed 'items' to 'songs' to match the data structure
-  songList.innerHTML = ''; // Clear previous search results
-  songs.forEach(song => {
-    const card = document.createElement('div');
-    card.className = 'bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:bg-gray-700 cursor-pointer';
-
-    card.innerHTML = `
-      <div class="aspect-w-1 aspect-h-1">
-        <img src="${song.coverArt}" alt="${song.title}" class="object-cover w-full h-full">
-      </div>
-      <div class="p-4">
-        <h3 class="text-md font-semibold truncate text-white">${song.title}</h3>
-        <p class="text-sm text-gray-400 truncate">${song.artist}</p>
-        <button class="play-button mt-2 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full text-xs transition-colors">
-          Play
-        </button>
-      </div>
-    `;
-
-    const songIndex = currentPlaylist.findIndex(s => s.id === song.id);
-
-    card.querySelector('.play-button').addEventListener('click', (e) => {
-      e.stopPropagation();
-      currentIndex = songIndex;
-      playSongFromCurrentPlaylist();
-    });
-
-    card.addEventListener('click', () => {
-      currentIndex = songIndex;
-      playSongFromCurrentPlaylist();
-    });
-
-    songList.appendChild(card);
-  });
-}
-
-// Consolidated Play Song Logic
-async function playSongFromCurrentPlaylist() {
-  if (currentIndex < 0 || currentIndex >= currentPlaylist.length) {
-    console.warn("Invalid currentIndex for playSongFromCurrentPlaylist:", currentIndex);
-    return;
-  }
-
-  const song = currentPlaylist[currentIndex];
-  if (!song) {
-    console.error("Song not found in currentPlaylist at index:", currentIndex);
-    return;
-  }
-
-  // Update Player UI
-  playerAlbumArt.src = song.coverArt || 'https://via.placeholder.com/64';
-  playerSongTitle.textContent = song.title || 'Unknown Title';
-  playerSongArtist.textContent = song.artist || 'Unknown Artist';
-
-  updatePlayPauseIcon(false); // Show loading or play icon initially
-  progressBar.value = 0;
-  currentTimeDisplay.textContent = formatTime(0);
-  totalDurationDisplay.textContent = formatTime(0);
-
-  try {
-    // Fetch and play audio
-    // nowPlaying.textContent = 'Loading...'; // Old element
-    mainPlayer.pause();
-    mainPlayer.removeAttribute('src'); // Ensure it reloads the source
-    mainPlayer.load(); // Important to call load before setting src if changing source
-
-    const res = await fetch(`/api/audio/${song.audioSourceId}`);
-    if (!res.ok) throw new Error(`Failed to fetch audio URL for ${song.audioSourceId}`);
-    const data = await res.json();
-
-    mainPlayer.src = data.audioUrl;
-    await mainPlayer.play();
-    updatePlayPauseIcon(true);
-
-  } catch (error) {
-    console.error('Failed to load audio:', error);
-    playerSongTitle.textContent = "Error loading track";
-    playerSongArtist.textContent = error.message.substring(0,30); // Show part of error
-    updatePlayPauseIcon(false);
-    // alert('Failed to load audio.'); // Avoid alert, use UI feedback
-  }
-}
-
-function updatePlayPauseIcon(isPlaying) {
-  if (isPlaying) {
-    playIcon.classList.add('hidden');
-    pauseIcon.classList.remove('hidden');
-  } else {
-    playIcon.classList.remove('hidden');
-    pauseIcon.classList.add('hidden');
-  }
-}
-
-function formatTime(seconds) {
-  const minutes = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
-}
-
-// Event Listeners for Player Controls
-playPauseButton.addEventListener('click', () => {
-  if (mainPlayer.paused || mainPlayer.ended) {
-    if(mainPlayer.src) mainPlayer.play();
-    else if(currentPlaylist.length > 0 && currentIndex !== -1) playSongFromCurrentPlaylist(); // Play current if src not set
-    else if(currentPlaylist.length > 0) { // Play first song if nothing selected
-        currentIndex = 0;
-        playSongFromCurrentPlaylist();
+    function handleSongHover(song) {
+        if (backgroundPlayer && song.youtubeHoverBgUrl) {
+            // Check if the src is already the one we want to set, to avoid unnecessary reloads if possible
+            if (backgroundPlayer.src !== song.youtubeHoverBgUrl) {
+                 backgroundPlayer.src = song.youtubeHoverBgUrl;
+            }
+        }
     }
-  } else {
-    mainPlayer.pause();
-  }
-});
 
-mainPlayer.addEventListener('play', () => updatePlayPauseIcon(true));
-mainPlayer.addEventListener('pause', () => updatePlayPauseIcon(false));
-mainPlayer.addEventListener('ended', () => {
-  updatePlayPauseIcon(false);
-  if (isLoop) {
-    mainPlayer.currentTime = 0;
-    mainPlayer.play();
-  } else {
-    playNextSong();
-  }
-});
-
-mainPlayer.addEventListener('loadedmetadata', () => {
-  totalDurationDisplay.textContent = formatTime(mainPlayer.duration);
-  progressBar.max = mainPlayer.duration;
-});
-
-mainPlayer.addEventListener('timeupdate', () => {
-  currentTimeDisplay.textContent = formatTime(mainPlayer.currentTime);
-  progressBar.value = mainPlayer.currentTime;
-});
-
-progressBar.addEventListener('input', () => {
-  mainPlayer.currentTime = progressBar.value;
-});
-
-volumeBar.addEventListener('input', (e) => {
-  mainPlayer.volume = e.target.value;
-  // TODO: Update volume icon based on volume level (e.g., muted, low, high)
-});
-
-loopButton.addEventListener('click', () => {
-  isLoop = !isLoop;
-  mainPlayer.loop = isLoop; // Also set the native loop property
-  loopButton.classList.toggle('text-green-500', isLoop); // Visual feedback
-  loopButton.classList.toggle('text-gray-400', !isLoop);
-});
-
-// Basic Next/Prev functionality
-function playNextSong() {
-  if (currentPlaylist.length === 0) return;
-  currentIndex = (currentIndex + 1) % currentPlaylist.length;
-  playSongFromCurrentPlaylist();
-}
-
-function playPrevSong() {
-  if (currentPlaylist.length === 0) return;
-  currentIndex = (currentIndex - 1 + currentPlaylist.length) % currentPlaylist.length;
-  playSongFromCurrentPlaylist();
-}
-
-nextButton.addEventListener('click', playNextSong);
-prevButton.addEventListener('click', playPrevSong);
-
-
-// TODO: Implement Shuffle, Volume Icon update, more robust playlist management
-
-// --- Fullscreen Player Logic ---
-
-function openFullscreenPlayer() {
-  if (currentIndex < 0 || currentIndex >= currentPlaylist.length) return;
-  const song = currentPlaylist[currentIndex];
-
-  fullscreenCoverArt.src = song.coverArt || 'https://via.placeholder.com/300';
-  fullscreenSongTitle.textContent = song.title || 'Unknown Title';
-  fullscreenSongArtist.textContent = song.artist || 'Unknown Artist';
-  fullscreenLyrics.textContent = song.lyrics || 'Lyrics not available for this song.';
-
-  // Handle background visual
-  fullscreenBackground.innerHTML = ''; // Clear previous background
-  if (song.backgroundVisual) {
-    if (song.backgroundVisual.startsWith('bg-gradient')) { // Check if it's a Tailwind gradient class
-      fullscreenBackground.className = `absolute inset-0 w-full h-full z-[-1] overflow-hidden ${song.backgroundVisual}`;
-    } else if (song.backgroundVisual.match(/\.(jpeg|jpg|gif|png)$/i) != null) { // Image URL
-      fullscreenBackground.className = `absolute inset-0 w-full h-full z-[-1] overflow-hidden bg-cover bg-center`;
-      fullscreenBackground.style.backgroundImage = `url('${song.backgroundVisual}')`;
-    } else if (song.backgroundVisual.match(/\.(mp4|webm|ogg)$/i) != null) { // Video URL
-      fullscreenBackground.className = `absolute inset-0 w-full h-full z-[-1] overflow-hidden`;
-      const videoEl = document.createElement('video');
-      videoEl.src = song.backgroundVisual;
-      videoEl.autoplay = true;
-      videoEl.loop = true;
-      videoEl.muted = true; // Important for autoplay policy
-      videoEl.className = 'w-full h-full object-cover';
-      fullscreenBackground.appendChild(videoEl);
-    } else { // Fallback
-      fullscreenBackground.className = `absolute inset-0 w-full h-full z-[-1] overflow-hidden bg-gray-800`;
+    function handleSongMouseOut() {
+        if (backgroundPlayer) {
+            // Avoid resetting if another hover event quickly changed it to a different song's bg
+            // This simple version will always revert to default. More complex logic could check current song.
+            if (backgroundPlayer.src !== defaultBgVideoUrl) {
+                backgroundPlayer.src = defaultBgVideoUrl;
+            }
+        }
     }
-  } else {
-    fullscreenBackground.className = `absolute inset-0 w-full h-full z-[-1] overflow-hidden bg-gray-800`;
-  }
+
+    function handleSongClick(song) {
+        if (lyricsText) {
+            lyricsText.textContent = song.lyrics;
+        }
+        if (activeSongYouTubePlayer && song.youtubeAudioUrl) {
+            // Add autoplay=1 to the YouTube audio URL for the player
+            const audioPlayUrl = song.youtubeAudioUrl.includes('?') ?
+                                 `${song.youtubeAudioUrl}&autoplay=1` :
+                                 `${song.youtubeAudioUrl}?autoplay=1`;
+            activeSongYouTubePlayer.src = audioPlayUrl;
+        }
+        if (activeSongDisplay) {
+            activeSongDisplay.classList.remove('hidden');
+        }
+        // Optionally, also set the main background to this song's hover video
+        if (backgroundPlayer && song.youtubeHoverBgUrl) {
+            if (backgroundPlayer.src !== song.youtubeHoverBgUrl) {
+                 backgroundPlayer.src = song.youtubeHoverBgUrl;
+            }
+        }
+    }
+
+    function setupNavigation() {
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetViewId = button.dataset.target;
+                showView(targetViewId);
+
+                // Update active state for buttons
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+            });
+        });
+    }
+
+    function showView(viewId) {
+        // If switching to search or library, ensure page2-content is visible
+        // and page1-content is hidden.
+        // If switching to page1-content, ensure it's visible and page2-content's specific views are hidden.
+
+        allViews.forEach(view => {
+            if (view) { // Check if view element exists
+                if (view.id === viewId) {
+                    view.classList.remove('hidden');
+                    // If the target is searchView or libraryView, make sure their container (page2Content) is also visible.
+                    if (viewId === 'search-view' || viewId === 'library-view') {
+                        if(page2Content) page2Content.classList.remove('hidden');
+                        if(page1Content) page1Content.classList.add('hidden'); // Hide page 1 explicitly
+                    } else if (viewId === 'page1-content') {
+                        if(page2Content) page2Content.classList.add('hidden'); // Hide page 2 container
+                    }
+                } else {
+                    view.classList.add('hidden');
+                }
+            }
+        });
+         // Special handling for page2Content container visibility
+        if (viewId === 'search-view' || viewId === 'library-view') {
+            if(page2Content) page2Content.classList.remove('hidden');
+            if(page1Content) page1Content.classList.add('hidden');
+        } else if (viewId === 'page1-content') {
+            if(page1Content) page1Content.classList.remove('hidden');
+            if(page2Content) page2Content.classList.add('hidden');
+        }
 
 
-  fullscreenPlayer.classList.remove('hidden');
-  fullscreenPlayer.classList.add('flex'); // Use flex for centering
-  // Trigger opacity transition
-  setTimeout(() => {
-    fullscreenPlayer.style.opacity = '1';
-  }, 10);
-}
+        // When switching views, hide the active song display on Page 1 if it's not the Home view
+        if (viewId !== 'page1-content' && activeSongDisplay) {
+            activeSongDisplay.classList.add('hidden');
+            // Optionally stop the YouTube player
+            if (activeSongYouTubePlayer) {
+                activeSongYouTubePlayer.src = ''; // Clearing src stops video
+            }
+        }
+    }
 
-function closeFullscreenPlayer() {
-  fullscreenPlayer.style.opacity = '0';
-  setTimeout(() => {
-    fullscreenPlayer.classList.add('hidden');
-    fullscreenPlayer.classList.remove('flex');
-    fullscreenBackground.style.backgroundImage = ''; // Clear style
-    fullscreenBackground.innerHTML = ''; // Clear any video
-  }, 500); // Match transition duration
-}
 
-closeFullscreenButton.addEventListener('click', closeFullscreenPlayer);
+    // Adjust initializeApp to call setupNavigation and show initial view
+    function initializeApp() {
+        if (backgroundPlayer) {
+            backgroundPlayer.src = defaultBgVideoUrl;
+        }
+        populateSongSuggestions();
+        setupNavigation();
+        showView('page1-content'); // Show home page by default
+    }
 
-// Modify existing card click to open fullscreen view
-// Option 1: Make the whole card open fullscreen (and play if not playing)
-// For renderFeaturedSongs:
-// card.addEventListener('click', () => {
-//   boolean songWasPlaying = mainPlayer.currentTime > 0 && !mainPlayer.paused && currentIndex === songIndex;
-//   currentIndex = songIndex;
-//   if(!songWasPlaying) playSongFromCurrentPlaylist(); // Play if not already playing this song
-//   openFullscreenPlayer();
-// });
-// For renderSongs (search):
-// card.addEventListener('click', () => {
-//   boolean songWasPlaying = mainPlayer.currentTime > 0 && !mainPlayer.paused && currentIndex === songIndex;
-//   currentIndex = songIndex;
-//   if(!songWasPlaying) playSongFromCurrentPlaylist();
-//   openFullscreenPlayer();
-// });
-
-// Option 2: Add a dedicated button or use album art in player bar
-// For now, let's make the album art in the main player bar trigger fullscreen
-playerAlbumArt.addEventListener('click', () => {
-  if (mainPlayer.src) { // Only open if a song is loaded/playing
-    openFullscreenPlayer();
-  }
+    initializeApp();
 });
-
-// Ensure playSongFromCurrentPlaylist also prepares for fullscreen if called directly
-// (already does by setting currentIndex and song details)
-
-// Update playSong to ensure song details are available for fullscreen
-// The current playSongFromCurrentPlaylist should already handle setting song details.
-// We just need to make sure that when a song starts playing, its data is ready.
-// The current structure where cards set `currentIndex` and call `playSongFromCurrentPlaylist` is good.

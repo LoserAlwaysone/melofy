@@ -1,0 +1,57 @@
+[
+  {
+    "id": "song1",
+    "title": "Midnight City",
+    "artist": "M83",
+    "album": "Hurry Up, We're Dreaming",
+    "coverArt": "https://upload.wikimedia.org/wikipedia/en/0/09/M83HurryUpWe%27reDreaming.jpg",
+    "audioSourceId": "dX3k_QDnzHE",
+    "backgroundColor": "bg-gradient-to-br from-purple-700 to-pink-500",
+    "backgroundVisual": "https://images.unsplash.com/photo-1516477675080-103dba58079c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+    "lyrics": "The city is my church..."
+  },
+  {
+    "id": "song2",
+    "title": "Bohemian Rhapsody",
+    "artist": "Queen",
+    "album": "A Night at the Opera",
+    "coverArt": "https://upload.wikimedia.org/wikipedia/en/9/9f/Queen_A_Night_At_The_Opera.png",
+    "audioSourceId": "fJ9rUzIMcZQ",
+    "backgroundColor": "bg-gradient-to-br from-gray-700 to-blue-900",
+    "backgroundVisual": "https://images.unsplash.com/photo-1598387993441-3cf595875367?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+    "lyrics": "Is this the real life? Is this just fantasy?"
+  },
+  {
+    "id": "song3",
+    "title": "Shape of You",
+    "artist": "Ed Sheeran",
+    "album": "÷ (Divide)",
+    "coverArt": "https://upload.wikimedia.org/wikipedia/en/4/45/Ed_Sheeran_-_Shape_of_You.png",
+    "audioSourceId": "kJQP7kiw5Fk",
+    "backgroundColor": "bg-gradient-to-br from-green-400 to-blue-500",
+    "backgroundVisual": "https://images.unsplash.com/photo-1508427953056-4023ca8e751f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+    "lyrics": "The club isn't the best place to find a lover..."
+  },
+  {
+    "id": "song4",
+    "title": "Blinding Lights",
+    "artist": "The Weeknd",
+    "album": "After Hours",
+    "coverArt": "https://upload.wikimedia.org/wikipedia/en/e/e6/The_Weeknd_-_Blinding_Lights.png",
+    "audioSourceId": "4NRXx6U8ABQ",
+    "backgroundColor": "bg-gradient-to-br from-red-600 to-yellow-500",
+    "backgroundVisual": "https://images.unsplash.com/photo-1590072094210-a080af1ac23d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+    "lyrics": "I've been tryna call..."
+  },
+  {
+    "id": "song5",
+    "title": "As It Was",
+    "artist": "Harry Styles",
+    "album": "Harry's House",
+    "coverArt": "https://upload.wikimedia.org/wikipedia/en/d/d5/Harry_Styles_-_As_It_Was.png",
+    "audioSourceId": "H5v3kku4y6Q",
+    "backgroundColor": "bg-gradient-to-br from-teal-400 to-orange-500",
+    "backgroundVisual": "https://images.unsplash.com/photo-1607754304102-525392a29ba3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+    "lyrics": "Holdin' me back, gravity's holdin' me back..."
+  }
+]
